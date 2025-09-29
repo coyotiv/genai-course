@@ -9,7 +9,7 @@ The application opens websockets with the OpenAI Realtime API and Twilio, and se
 - Clone the repository:
 
 ```
-git clone https://github.com/WTMBerlin/generative-ai-course.git
+git clone https://github.com/coyotiv/genai-course.git
 ```
 
 - Go to the project directory:
@@ -83,7 +83,7 @@ In your Phone Number configuration settings, update the first **A call comes in*
 ## Run the app
 
 ```
-node app.js
+npm start
 ```
 
 ## Test the app

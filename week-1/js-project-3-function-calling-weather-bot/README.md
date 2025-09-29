@@ -7,7 +7,7 @@ This project is a simple weather assistant built using the OpenAI GPT-4 model wi
 - Clone the repository:
 
 ```
-git clone https://github.com/WTMBerlin/generative-ai-course.git
+git clone https://github.com/coyotiv/genai-course.git
 ```
 
 - Go to the project directory:
@@ -31,5 +31,5 @@ OPENAI_API_KEY=your_openai_api_key
 - Start the server:
 
 ```
-node server.js
+npm start
 ```

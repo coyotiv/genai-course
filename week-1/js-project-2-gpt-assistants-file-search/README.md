@@ -7,13 +7,13 @@ This project implements an assistant using OpenAI that answers questions based o
 - Clone the repository:
 
 ```
-git clone https://github.com/WTMBerlin/generative-ai-course.git
+git clone https://github.com/coyotiv/genai-course.git
 ```
 
 - Go to the project directory:
 
 ```
-cd week-1/js-project-2-gpt-assistants-app
+cd week-1/js-project-2-gpt-assistants-file-search
 ```
 
 - Install dependencies

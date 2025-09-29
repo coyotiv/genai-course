@@ -7,7 +7,7 @@ This is a Node.js application that allows users to record their voice, transcrib
 - Clone the repository:
 
 ```
-git clone https://github.com/WTMBerlin/generative-ai-course.git
+git clone https://github.com/coyotiv/genai-course.git
 
 ```
 
