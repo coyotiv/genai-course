@@ -13,7 +13,7 @@ This is a Node.js application that generates a poem using OpenAI gpt-4o-mini mod
 - Clone the repository:
 
 ```
-git clone https://github.com/WTMBerlin/generative-ai-course.git
+git clone https://github.com/coyotiv/genai-course.git
 
 ```
 
