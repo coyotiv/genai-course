@@ -1,7 +1,5 @@
 const express = require('express')
-const fetch = require('node-fetch')
 const fs = require('fs')
-const path = require('path')
 const dotenv = require('dotenv')
 dotenv.config()
 const axios = require('axios')
@@ -24,20 +22,22 @@ app.post('/generate-poetry', async (req, res) => {
   )}. Each verse should be about 4-6 lines and creatively incorporate the words provided. Do not add additional words like verse except poetry`
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
         model: 'gpt-4o-mini',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,
-      }),
-    })
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
 
-    const data = await response.json()
+    const data = response.data
     if (data.choices && data.choices.length > 0) {
       const lyrics = data.choices[0].message.content.trim()
       return res.json({ lyrics })
