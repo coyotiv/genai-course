@@ -3,12 +3,17 @@ const fs = require('fs')
 const dotenv = require('dotenv')
 dotenv.config()
 const axios = require('axios')
+const OpenAI = require('openai')
 const app = express()
 app.use(express.json())
 app.use(express.static('public'))
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY
 const VOICE_ID = 'XB0fDUnXU5powFXDhCwa' // or use premade voices in elevenlabs like CwhRBWXzGAHq8TQ4Fs17
+
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY,
+})
 
 app.post('/generate-poetry', async (req, res) => {
   const { words } = req.body
@@ -22,24 +27,13 @@ app.post('/generate-poetry', async (req, res) => {
   )}. Each verse should be about 4-6 lines and creatively incorporate the words provided. Do not add additional words like verse except poetry`
 
   try {
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 100,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    )
+    const response = await openai.responses.create({
+      model: 'gpt-5-mini',
+      input: prompt,
+    })
 
-    const data = response.data
-    if (data.choices && data.choices.length > 0) {
-      const lyrics = data.choices[0].message.content.trim()
+    if (response.output_text) {
+      const lyrics = response.output_text.trim()
       return res.json({ lyrics })
     } else {
       return res.status(500).json({ error: 'Invalid response from OpenAI API.' })

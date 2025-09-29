@@ -41,7 +41,7 @@ app.post('/upload-audio', upload.single('file'), async (req, res) => {
   try {
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
-      model: 'whisper-1',
+      model: 'gpt-4o-transcribe',
     })
 
     const transcriptText = transcription.text
@@ -51,8 +51,8 @@ app.post('/upload-audio', upload.single('file'), async (req, res) => {
       prompt: transcriptText,
       n: 1,
       size: '1024x1024',
-      model: 'dall-e-3',
-      quality: 'standard',
+      model: 'gpt-image-1',
+      quality: 'high',
     })
 
     const imageUrl = image.data[0].url
