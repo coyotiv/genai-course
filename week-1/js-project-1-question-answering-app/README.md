@@ -7,7 +7,7 @@ This is a Node.js application that answers questions using the OpenAI gpt-5-mini
 - Clone the repository:
 
 ```
-git clone https://github.com/WTMBerlin/generative-ai-course.git
+git clone https://github.com/coyotiv/genai-course.git
 ```
 
 - Go to the project directory:
