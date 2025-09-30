@@ -78,7 +78,7 @@ app.post('/voice-over', async (req, res) => {
     console.log('Audio file saved as generated_audio.mp3')
     res.json({ audioUrl: '/generated_audio.mp3' })
   } catch (error) {
-    console.error('Error generating voice-over:', error.response ? error.response.data : error.message)
+    console.error('Error generating voice-over:', error.response ? error.response.data.toString() : error.message)
     return res.status(500).json({ error: 'Failed to generate voice-over.' })
   }
 })
