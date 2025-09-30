@@ -52,7 +52,7 @@ flowchart TD
     %%    - FIRST respond with a friendly goodbye message (e.g., "It was great chatting with you! Thanks for calling, goodbye!")
     %%    - THEN call end_call to terminate the conversation
     %% 4. NEVER end call without saying goodbye`
-const VOICE = 'alloy'
+const VOICE = 'sage'
 const PORT = process.env.PORT || 5050
 
 const LOG_EVENT_TYPES = [
@@ -74,9 +74,6 @@ fastify.get('/', async (request, reply) => {
 fastify.all('/incoming-call', async (request, reply) => {
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
                           <Response>
-                              <Say>Please wait while we connect your call to the A. I. voice assistant, powered by Twilio and the Open-A.I. Realtime API</Say>
-                              <Pause length="1"/>
-                              <Say>O.K. you can start talking!</Say>
                               <Connect>
                                   <Stream url="wss://${request.headers.host}/media-stream" />
                               </Connect>
@@ -181,6 +178,16 @@ fastify.register(async fastify => {
             media: { payload: Buffer.from(response.delta, 'base64').toString('base64') },
           }
           connection.send(JSON.stringify(audioDelta))
+        }
+
+        // Handle speech interruption - stop Twilio audio when user starts speaking
+        if (response.type === 'input_audio_buffer.speech_started') {
+          console.log('User started speaking - clearing Twilio audio stream')
+          const clearMessage = {
+            event: 'clear',
+            streamSid,
+          }
+          connection.send(JSON.stringify(clearMessage))
         }
 
         if (response.type === 'response.done' && response.response && Array.isArray(response.response.output)) {
