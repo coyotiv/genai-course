@@ -18,6 +18,11 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir)
 }
 
+const generatedImagesDir = path.join(__dirname, 'public', 'generated-images')
+if (!fs.existsSync(generatedImagesDir)) {
+  fs.mkdirSync(generatedImagesDir, { recursive: true })
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadDir)
@@ -47,22 +52,45 @@ app.post('/upload-audio', upload.single('file'), async (req, res) => {
     const transcriptText = transcription.text
     console.log('Transcribed text:', transcriptText)
 
+    // Return transcription immediately
+    res.json({ transcription: transcriptText })
+
+    fs.unlinkSync(audioPath)
+  } catch (error) {
+    console.error('Error processing audio:', error)
+    res.status(500).json({ error: 'Failed to process audio.' })
+  }
+})
+
+app.post('/generate-image', express.json(), async (req, res) => {
+  const { prompt } = req.body
+
+  try {
     const image = await openai.images.generate({
-      prompt: transcriptText,
+      prompt: prompt,
       n: 1,
       size: '1024x1024',
       model: 'gpt-image-1',
       quality: 'high',
     })
 
-    const imageUrl = image.data[0].url
-    console.log('Generated image URL:', imageUrl)
-    res.json({ imageUrl })
+    // Save the base64 image data to a local file
+    const b64Data = image.data[0].b64_json
+    const timestamp = Date.now()
+    const imageName = `image-${timestamp}.png`
+    const imagePath = path.join(generatedImagesDir, imageName)
 
-    fs.unlinkSync(audioPath)
+    // Decode base64 and write to file
+    const imageBuffer = Buffer.from(b64Data, 'base64')
+    fs.writeFileSync(imagePath, imageBuffer)
+
+    // Return the local URL that the frontend can access
+    const imageUrl = `/generated-images/${imageName}`
+    console.log('Generated image saved to:', imagePath)
+    res.json({ imageUrl })
   } catch (error) {
-    console.error('Error processing audio or generating image:', error)
-    res.status(500).json({ error: 'Failed to process audio or generate image.' })
+    console.error('Error generating image:', error)
+    res.status(500).json({ error: 'Failed to generate image.' })
   }
 })
 
