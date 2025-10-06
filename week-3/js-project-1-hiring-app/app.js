@@ -129,21 +129,23 @@ app.post('/query', async (req, res) => {
       includeMetadata: true,
     })
 
-    const scoreThreshold = 0.75
-    const filteredMatches = results.matches.filter(match => match.score > scoreThreshold)
+    console.log('results', results)
 
-    if (filteredMatches.length > 0) {
-      filteredMatches.forEach((match, idx) => {
+    // Sort matches by score
+    const sortedTopMatches = [...results.matches].sort((a, b) => b.score - a.score)
+
+    if (sortedTopMatches.length > 0) {
+      sortedTopMatches.forEach((match, idx) => {
         console.log(`Result ${idx + 1}:`)
         console.log(`Score: ${match.score}`)
       })
 
-      const detailedResponse = await generateResponseFromChunks(filteredMatches, queryText, context)
+      const detailedResponse = await generateResponseFromChunks(sortedTopMatches, queryText, context)
       context += `\nUser query: ${queryText}\nResponse: ${detailedResponse}\n`
 
       res.json({
         status: 'success',
-        candidates: filteredMatches.map(match => ({
+        candidates: sortedTopMatches.map(match => ({
           id: match.id,
           score: match.score,
           text: match.metadata.text,
