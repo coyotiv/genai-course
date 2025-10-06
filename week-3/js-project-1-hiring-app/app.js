@@ -32,7 +32,7 @@ app.use(bodyParser.json())
 const generateEmbedding = async text => {
   const response = await openai.embeddings.create({
     input: text,
-    model: 'text-embedding-ada-002',
+    model: 'text-embedding-3-small',
   })
   return response.data[0].embedding
 }
@@ -51,19 +51,13 @@ const generateResponseFromChunks = async (chunks, userQuery, context) => {
     Response:
   `
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4',
-    messages: [
-      {
-        role: 'system',
-        content: 'You are an AI assistant providing detailed responses based on given resume data.',
-      },
-      { role: 'user', content: prompt },
-    ],
-    max_tokens: 500,
+  const response = await openai.responses.create({
+    model: 'gpt-5-mini',
+    input: prompt,
+    max_output_tokens: 500,
   })
 
-  return response.choices[0].message.content
+  return response.output_text
 }
 
 const parseCSVFile = (csvPath, columns) => {
