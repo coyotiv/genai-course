@@ -25,8 +25,15 @@
         color: #333;
       }
 
+      .search-container {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+        align-items: center;
+      }
+
       input[type='text'] {
-        width: 100%;
+        flex: 1;
         padding: 10px;
         margin: 10px 0;
         border-radius: 5px;
@@ -40,6 +47,8 @@
         color: white;
         cursor: pointer;
         border-radius: 5px;
+        height: 40px;
+        box-sizing: border-box;
       }
 
       button:hover {
@@ -88,8 +97,10 @@
 
       <h2>Query Candidates</h2>
       <form id="query-form">
-        <input type="text" id="queryText" placeholder="Enter job title or skills" required />
-        <button type="submit">Search</button>
+        <div class="search-container">
+          <input type="text" id="queryText" placeholder="Enter job title or skills" required />
+          <button type="submit">Search</button>
+        </div>
         <div id="query-loading-message" class="loading-message"></div>
       </form>
 
@@ -123,6 +134,9 @@
         e.preventDefault()
         const queryText = document.getElementById('queryText').value
 
+        const resultDiv = document.getElementById('result')
+        resultDiv.innerHTML = ''
+
         const queryLoadingMessage = document.getElementById('query-loading-message')
         queryLoadingMessage.innerHTML = 'Searching for candidates, please wait...'
 
@@ -137,9 +151,6 @@
         const result = await response.json()
 
         queryLoadingMessage.innerHTML = ''
-
-        const resultDiv = document.getElementById('result')
-        resultDiv.innerHTML = ''
 
         resultDiv.innerHTML = `<p>${result.detailedResponse}</p>`
       })

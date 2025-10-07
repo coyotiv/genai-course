@@ -6,16 +6,17 @@ This project implements a resume search application that stores resume data from
 
 To store embeddings, the Pinecone database is used in this project. A free Pinecone account was utilized ([Pinecone.io](https://www.pinecone.io/)) with the following configuration:
 
-1. **Pinecone Index** is used to store the embeddings.
-2. **Dimensions**: 1536 (based on the OpenAI text-embedding-ada-002 model).
-3. **Host type**: Serverless.
+1. **Embedding Model**: text-embedding-3-small
+2. **Pinecone Index** is used to store the embeddings.
+3. **Dimensions**: 1536 (based on the OpenAI text-embedding-3-small model).
+4. **Host type**: Serverless.
 
 ### Installation
 
 - Clone the repository:
 
 ```
-git clone https://github.com/WTMBerlin/generative-ai-course.git
+git clone https://github.com/coyotiv/genai-course.git
 
 ```
 
@@ -42,7 +43,7 @@ PINECONE_HOST = pinecone_host
 - Start the server:
 
 ```
-node app.js
+npm start
 ```
 
 ## Resume Data

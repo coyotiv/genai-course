@@ -30,16 +30,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 const extractCategoriesFromText = async text => {
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      {
-        role: 'system',
-        content: 'You extract information from resumes and return them in a structured JSON format.',
-      },
+  const response = await openai.responses.create({
+    model: 'gpt-5-mini',
+    input: [
       {
         role: 'user',
-        content: `Extract or predict the following information from the given resume text:
+        content: [
+          {
+            type: 'input_text',
+            text: `Extract or predict the following information from the given resume text:
 - Roles: the roles held by the individual (e.g., Software Engineer, Project Manager).
 - Skills: the technical skills possessed by the individual (e.g., Java, Python, Project Management).
 - Seniority: extract or predict the seniority level from experience, technologies, etc. (e.g., Junior, Mid-level, Senior, or years of experience).
@@ -47,11 +46,13 @@ const extractCategoriesFromText = async text => {
 
 Resume:
 ${text}`,
+          },
+        ],
       },
     ],
-    response_format: {
-      type: 'json_schema',
-      json_schema: {
+    text: {
+      format: {
+        type: 'json_schema',
         name: 'resume_extraction_schema',
         schema: {
           type: 'object',
@@ -84,7 +85,7 @@ ${text}`,
     },
   })
 
-  const extractedData = JSON.parse(response.choices[0].message.content)
+  const extractedData = JSON.parse(response.output_text)
   console.log('extractedData', extractedData)
   return extractedData
 }
@@ -95,7 +96,7 @@ const generateCategoryEmbeddings = async categories => {
   for (const [category, text] of Object.entries(categories)) {
     const response = await openai.embeddings.create({
       input: text.join(', '),
-      model: 'text-embedding-ada-002',
+      model: 'text-embedding-3-small',
     })
     embeddings[category] = response.data[0].embedding
   }
@@ -127,8 +128,10 @@ const parseCSVFile = (csvPath, columns) => {
 }
 
 const storeEmbeddingsInPinecone = async texts => {
+  console.log(`Starting embedding process for ${texts.length} resumes...`)
   for (let i = 0; i < texts.length; i++) {
     const text = texts[i]
+    console.log(`Processing resume ${i + 1}/${texts.length} (ID: ${text.id})`)
     const categories = await extractCategoriesFromText(text.resume)
     const categoryEmbeddings = await generateCategoryEmbeddings(categories)
 
@@ -150,6 +153,7 @@ app.post('/generate-embeddings', async (req, res) => {
   const columns = ['Category', 'Resume']
   try {
     const data = await parseCSVFile(csvPath, columns)
+    console.log(`CSV parsing complete. Found ${data.length} resumes.`)
     await storeEmbeddingsInPinecone(data)
     res.send('Embeddings generated and stored in Pinecone.')
   } catch (error) {
@@ -169,16 +173,14 @@ Candidates:
   ${candidatesJSON}
   `
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [
-      { role: 'system', content: prompt },
-      { role: 'user', content: `Who are the best candidates for ${queryText}?` },
-    ],
-    max_tokens: 1000,
+  const response = await openai.responses.create({
+    model: 'gpt-5-mini',
+    input: `${prompt}
+
+Who are the best candidates for ${queryText}?`,
   })
 
-  return response.choices[0].message.content
+  return response.output_text
 }
 
 app.post('/query', async (req, res) => {
