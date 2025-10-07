@@ -71,6 +71,19 @@
         margin: 5px 0;
       }
 
+      .detailed-response {
+        background-color: #e8f5e9;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border-left: 4px solid #4caf50;
+      }
+
+      .detailed-response h3 {
+        margin-top: 0;
+        color: #2e7d32;
+      }
+
       .loading-message {
         margin-top: 10px;
         font-style: italic;
@@ -148,6 +161,19 @@
         resultDiv.innerHTML = ''
 
         if (result.status === 'success') {
+          // Display detailed response
+          if (result.detailedResponse) {
+            const detailedDiv = document.createElement('div')
+            detailedDiv.className = 'detailed-response'
+            detailedDiv.innerHTML = `<h3>AI Analysis</h3><p>${result.detailedResponse}</p>`
+            resultDiv.appendChild(detailedDiv)
+          }
+
+          // Display candidates
+          const candidatesTitle = document.createElement('h3')
+          candidatesTitle.textContent = 'Top Matching Candidates'
+          resultDiv.appendChild(candidatesTitle)
+
           result.candidates.forEach(candidate => {
             const candidateDiv = document.createElement('div')
             candidateDiv.className = 'candidate'
