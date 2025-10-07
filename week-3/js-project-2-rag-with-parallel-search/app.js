@@ -18,7 +18,7 @@ const openai = new OpenAI({
 const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY,
 })
-const indexName = 'index3'
+const indexName = 'index4'
 const pinecone_host = process.env.PINECONE_HOST
 const index = pinecone.Index(indexName, pinecone_host)
 

@@ -78,10 +78,38 @@
         color: white;
       }
 
+      table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      table tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .detailed-response {
+        background-color: #e8f5e9;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border-left: 4px solid #4caf50;
+      }
+
+      .detailed-response h3 {
+        margin-top: 0;
+        color: #2e7d32;
+      }
+
       .loading-message {
         margin-top: 10px;
         font-style: italic;
         color: #555;
+      }
+
+      .resume-preview {
+        max-width: 400px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     </style>
   </head>
@@ -152,7 +180,56 @@
 
         queryLoadingMessage.innerHTML = ''
 
-        resultDiv.innerHTML = `<p>${result.detailedResponse}</p>`
+        resultDiv.innerHTML = ''
+
+        if (result.status === 'success') {
+          // Display detailed response
+          if (result.detailedResponse) {
+            const detailedDiv = document.createElement('div')
+            detailedDiv.className = 'detailed-response'
+            detailedDiv.innerHTML = `<h3>AI Recruiter Analysis</h3><p>${result.detailedResponse}</p>`
+            resultDiv.appendChild(detailedDiv)
+          }
+
+          // Display candidates table
+          if (result.candidates && result.candidates.length > 0) {
+            const tableTitle = document.createElement('h3')
+            tableTitle.textContent = 'Top Matching Candidates'
+            resultDiv.appendChild(tableTitle)
+
+            const table = document.createElement('table')
+            table.innerHTML = `
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>ID</th>
+                  <th>Score</th>
+                  <th>Resume Preview</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${result.candidates
+                  .map(
+                    (candidate, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td>${candidate.id}</td>
+                    <td>${candidate.score.toFixed(2)}</td>
+                    <td><div class="resume-preview" title="${candidate.resume}">${candidate.resume.substring(
+                      0,
+                      150
+                    )}...</div></td>
+                  </tr>
+                `
+                  )
+                  .join('')}
+              </tbody>
+            `
+            resultDiv.appendChild(table)
+          }
+        } else {
+          resultDiv.innerHTML = `<p>${result.message || 'No relevant matches found.'}</p>`
+        }
       })
     </script>
   </body>
