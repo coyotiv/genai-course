@@ -18,7 +18,7 @@ const openai = new OpenAI({
 const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY,
 })
-const indexName = 'index3'
+const indexName = 'index5'
 const pinecone_host = process.env.PINECONE_HOST
 const index = pinecone.Index(indexName, pinecone_host)
 
@@ -54,7 +54,6 @@ const generateResponseFromChunks = async (chunks, userQuery, context) => {
   const response = await openai.responses.create({
     model: 'gpt-5-mini',
     input: prompt,
-    max_output_tokens: 500,
   })
 
   return response.output_text
