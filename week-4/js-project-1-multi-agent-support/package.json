@@ -1,0 +1,19 @@
+{
+  "name": "js-project-1-multi-agent-support",
+  "version": "1.0.0",
+  "description": "Multi-agent customer support system using OpenAI Agents SDK",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@openai/agents": "^0.1.9",
+    "dotenv": "^17.2.3",
+    "zod": "^3.25.76"
+  }
+}
